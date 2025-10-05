@@ -1,0 +1,92 @@
+//Include Guards
+#ifndef MENU_SORTING
+#define MENU_SORTING
+
+#include <chrono>
+#include "insertionSort.cpp"
+#include "Quicksort.cpp"
+#include "heapSort.cpp"
+#include "countSort.cpp"
+void menuSearching();//Forward Declaration
+
+using namespace std;
+typedef chrono::high_resolution_clock Clock;
+typedef chrono::nanoseconds ns;
+
+void menuSorting(void)
+{
+    data measurements = readFile();
+    if (measurements.success == true)
+    {
+        string selection;
+        cout << "\nPlease Select A Sorting Method From The Following:\n" << endl;
+        cout << "1. Insertion Sort." << endl;
+        cout << "2. Quick Sort." << endl;
+        cout << "3. Heap Sort." << endl;
+        cout << "4. Counting Sort." << endl;
+        cout << "5. Continue." << endl;
+        cout << "Option: ";
+        cin >> selection;
+        while(selection != "1" && selection != "2" && selection != "3" && selection != "4" && selection != "5"){
+            cout << "\nOption Unavailable. Please Select Again:\n" << endl;
+            cout << "1. Insertion Sort." << endl;
+            cout << "2. Quick Sort." << endl;
+            cout << "3. Heap Sort." << endl;
+            cout << "4. Counting Sort." << endl;
+            cout << "5. Continue." << endl;
+            cout << "Option: ";
+            cin >> selection;
+        }
+
+        switch(stoi(selection)){
+            case 1:{
+                cout << "\nInsertion Sort ";
+                auto start = Clock::now(); ///Start timer
+                insertionSort(measurements.temp, measurements.date, measurements.temp, measurements.phosphate, measurements.silicate, measurements.nitrite, measurements.nitrate, measurements.salinity, measurements.oxygen);
+                auto end = Clock::now(); ///end timer
+                auto duration = chrono::duration_cast<ns>(end - start).count(); ///Total time elapsed in nanoseconds
+                cout<<"elapsed time: "<< duration <<"ns\n";
+                menuSorting();
+                break;
+            }
+            case 2:{
+                cout << "\nQuick Sort " << endl;
+                auto start = Clock::now(); ///Start timer
+                Quicksort(measurements.temp,measurements.date,0,measurements.temp.size()-1);
+                auto end = Clock::now(); ///end timer
+                auto duration = chrono::duration_cast<ns>(end - start).count(); ///Total time elapsed in nanoseconds
+                cout<<"elapsed time: "<< duration <<"ns\n";
+                menuSorting();
+                break;
+            }
+            case 3:{
+                cout<<"\nHeap Sort ";
+                auto start = Clock::now(); ///Start timer
+                heapSort(measurements.phosphate,measurements.date);
+                auto end = Clock::now(); ///end timer
+                auto duration = chrono::duration_cast<ns>(end - start).count(); ///Total time elapsed in nanoseconds
+                cout<<"elapsed time: "<< duration <<"ns\n";
+                menuSorting();
+                break;
+            }
+            case 4:{
+                cout<<"\nCount Sort ";
+                auto start = Clock::now(); ///Start timer
+                countSort(measurements.phosphate,measurements.date,measurements.phosphate.size());
+                auto end = Clock::now(); ///end timer
+                auto duration = chrono::duration_cast<ns>(end - start).count(); ///Total time elapsed in nanoseconds
+                cout<<"elapsed time: "<< duration <<"ns\n";
+                menuSorting();
+                break;
+            }
+            case 5:{
+                menuSearching();
+                break;
+            }
+        }
+    }
+    else{//if file was not read correctly
+        cout<<"Error File Not Found"<<endl;
+    }
+}
+#endif // MENU_SORTING

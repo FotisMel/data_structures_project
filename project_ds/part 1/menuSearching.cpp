@@ -1,0 +1,145 @@
+//Include Guards
+#ifndef MENU_SEARCHING
+#define MENU_SEARCHING
+
+#include <math.h> /* sqrt */
+#include <unistd.h> /*sleep*/
+#include <chrono>
+#include "vecstoi.cpp"
+#include "insertionSort.cpp"
+#include "binSearch.cpp"
+#include "interpolationSearch.cpp"
+#include "BIS.cpp"
+#include "BIS2.cpp"
+void menuSorting();//Forward Declaration
+
+using namespace std;
+typedef chrono::high_resolution_clock Clock;
+typedef chrono::nanoseconds ns;
+
+void menuSearching(void)
+{
+    data measurements = readFile();
+    if (measurements.success == true)
+    {
+        vector<int> newDate = vecstoi(measurements.date);
+
+        //You sort according to the first argument you insert.
+        insertionSort(newDate, measurements.date, measurements.temp, measurements.phosphate, measurements.silicate, measurements.nitrite, measurements.nitrate, measurements.salinity, measurements.oxygen);
+
+        string selection;
+        cout << "\nPlease Select An Option From The Following:\n" << endl;
+        cout << "1. Print File Data To Screen." << endl;
+        cout << "2. Binary Search." << endl;
+        cout << "3. Interpolation Search." << endl;
+        cout << "4. Binary Interpolation Search." << endl;
+        cout << "5. Improved Binary Interpolation Search." << endl;
+        cout << "6. Go Back." << endl;
+        cout << "7. Exit The Application." << endl;
+        cout << "Option: ";
+        cin >> selection;
+        while(selection != "1" && selection != "2" && selection != "3" && selection != "4" && selection != "5" && selection != "6" && selection != "7"){
+            cout << "\nOption Unavailable. Please Select Again:\n" << endl;
+            cout << "1. Print File Data To Screen." << endl;
+            cout << "2. Binary Search." << endl;
+            cout << "3. Interpolation Search." << endl;
+            cout << "4. Binary Interpolation Search." << endl;
+            cout << "5. Improved Binary Interpolation Search." << endl;
+            cout << "6. Go Back." << endl;
+            cout << "7. Exit The Application." << endl;
+            cout << "Option: ";
+            cin >> selection;
+        }
+        string key; //Search inputs are saved here
+        int pos; //Search results are saved here
+        switch(stoi(selection)){
+            case 1:{
+                printData(measurements);
+                menuSearching();
+                break;
+            }
+            case 2:{
+                cout<<"Enter the date you want to search: ";
+                cin>>key;
+                auto start = Clock::now(); ///Start timer
+                pos = binSearch(key, newDate, 0, newDate.size()-1);
+                auto end = Clock::now(); ///end timer
+                if(pos!=-1)
+                {
+                    printCateg;
+                    cout << measurements.date[pos] << "\t" << measurements.temp[pos] << "\t" << measurements.phosphate[pos] << "\t" << measurements.silicate[pos] << "\t" << measurements.nitrite[pos] << "\t" << measurements.nitrate[pos] << "\t" <<  measurements.salinity[pos] << "\t" << measurements.oxygen[pos] <<endl;cout<< "pos = " << pos << endl;
+                }
+                auto duration = chrono::duration_cast<ns>(end - start).count(); ///Total time elapsed in nanoseconds
+                while(duration == 0)//If the timer had an error
+                {
+                    auto start = Clock::now(); ///Start timer
+                    pos = binSearch(key, newDate, 0, newDate.size()-1);
+                    auto end = Clock::now(); ///end timer
+                    duration = chrono::duration_cast<ns>(end - start).count(); ///Total time elapsed in nanoseconds
+                }
+                cout<<"elapsed time: "<< duration <<"ns\n";
+                menuSearching();
+                break;
+            }
+            case 3:{
+                cout<<"Enter the date you want to search: ";
+                cin>>key;
+                auto start = Clock::now(); ///Start timer
+                pos = interpolationSearch(key, newDate, newDate.size());
+                auto end = Clock::now(); ///end timer
+                if(pos!=-1)
+                {
+                    printCateg;
+                    cout << measurements.date[pos] << "\t" << measurements.temp[pos] << "\t" << measurements.phosphate[pos] << "\t" << measurements.silicate[pos] << "\t" << measurements.nitrite[pos] << "\t" << measurements.nitrate[pos] << "\t" <<  measurements.salinity[pos] << "\t" << measurements.oxygen[pos] <<endl;
+                }
+                auto duration = chrono::duration_cast<ns>(end - start).count(); ///Total time elapsed in nanoseconds
+                cout<<"elapsed time: "<< duration <<"ns\n";
+                menuSearching();
+                break;
+            }
+            case 4:{
+                cout<<"Enter the date you want to search: ";
+                cin>>key;
+                auto start = Clock::now(); ///Start timer
+                pos = BIS(key, newDate, newDate.size());
+                auto end = Clock::now(); ///end timer
+                if(pos!=-1)
+                {
+                    printCateg;
+                    cout << measurements.date[pos] << "\t" << measurements.temp[pos] << "\t" << measurements.phosphate[pos] << "\t" << measurements.silicate[pos] << "\t" << measurements.nitrite[pos] << "\t" << measurements.nitrate[pos] << "\t" <<  measurements.salinity[pos] << "\t" << measurements.oxygen[pos] <<endl;
+                }
+                auto duration = chrono::duration_cast<ns>(end - start).count(); ///Total time elapsed in nanoseconds
+                cout<<"elapsed time: "<< duration <<"ns\n";
+                menuSearching();
+                break;
+            }
+            case 5:{
+                cout<<"Enter the date you want to search: ";
+                cin>>key;
+                auto start = Clock::now(); ///Start timer
+                pos = BIS2(key, newDate, newDate.size());
+                auto end = Clock::now(); ///end timer
+                if(pos!=-1)
+                {
+                    printCateg;
+                    cout << measurements.date[pos] << "\t" << measurements.temp[pos] << "\t" << measurements.phosphate[pos] << "\t" << measurements.silicate[pos] << "\t" << measurements.nitrite[pos] << "\t" << measurements.nitrate[pos] << "\t" <<  measurements.salinity[pos] << "\t" << measurements.oxygen[pos] <<endl;cout<< "pos = " << pos << endl;
+                }
+                auto duration = chrono::duration_cast<ns>(end - start).count(); ///Total time elapsed in nanoseconds
+                cout<<"elapsed time: "<< duration <<"ns\n";
+                menuSearching();
+                break;
+            }
+            case 6:{
+                menuSorting();
+            }
+            case 7:{
+                cout<<"Exiting Application"<<endl;
+                exit();
+            }
+        }
+    }
+    else{//if file was not read correctly
+        cout<<"Error File Not Found"<<endl;
+    }
+}
+#endif // MENU_SEARCHING
